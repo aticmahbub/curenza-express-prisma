@@ -42,7 +42,7 @@ CREATE TABLE "doctors" (
     "email" TEXT NOT NULL,
     "profilePhoto" TEXT,
     "contactNumber" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
+    "address" TEXT,
     "registrationNumber" TEXT NOT NULL,
     "experience" INTEGER NOT NULL DEFAULT 0,
     "gender" "Gender" NOT NULL,
@@ -63,20 +63,12 @@ CREATE TABLE "patients" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "profilePhoto" TEXT,
-    "address" TEXT NOT NULL,
+    "address" TEXT,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "patients_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
