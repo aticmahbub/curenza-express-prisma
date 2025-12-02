@@ -1,7 +1,12 @@
 import z from 'zod';
 
-const createUserValidationSchema = z.object({
+const createPatientValidationSchema = z.object({
     password: z.string(),
-    patient: z.string({error: 'Name should be string'}),
-    email: z.email(),
+    patient: z.object({
+        name: z.string({error: 'Name should be string'}),
+        email: z.email(),
+        address: z.string().optional(),
+    }),
 });
+
+export const UserValidation = {createPatientValidationSchema};

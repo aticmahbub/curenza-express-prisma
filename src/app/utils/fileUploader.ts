@@ -1,5 +1,7 @@
 import multer from 'multer';
 import path from 'path';
+import {v2 as cloudinary} from 'cloudinary';
+import config from '../../config';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -13,6 +15,24 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-const uploadToCloudinary = (file: Express.Multer.File) => {};
+const uploadToCloudinary = async (file: Express.Multer.File) => {
+    // Configuration
+    cloudinary.config({
+        cloud_name: config.cloudinary.cloudinary_api_name,
+        api_key: config.cloudinary.cloudinary_api_key,
+        api_secret: config.cloudinary.cloudinary_api_secret,
+    });
 
-export const fileUploader = {upload};
+    // Upload an image
+    const uploadResult = await cloudinary.uploader
+        .upload(file.path, {
+            public_id: file.filename,
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+
+    return uploadResult;
+};
+
+export const fileUploader = {upload, uploadToCloudinary};
