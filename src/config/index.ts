@@ -13,4 +13,8 @@ export default {
         cloudinary_api_key: process.env.CLOUDINARY_API_KEY as string,
         cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET as string,
     },
+    jwt: {
+        jwt_access_secret: process.env.JWT_ACCESS_SECRET as string,
+        jwt_refresh_secret: process.env.JWT_REFRESH_SECRET as string,
+    },
 };
