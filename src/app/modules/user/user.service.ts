@@ -74,6 +74,13 @@ const getALlUsers = async (params, options) => {
         });
     }
 
+    const whereConditions: Prisma.UserWhereInput =
+        andConditions.length > 0
+            ? {
+                  AND: andConditions,
+              }
+            : {};
+
     if (Object.keys(filterData).length > 0) {
         andConditions.push({
             AND: Object.keys(filterData).map((key) => ({
@@ -85,13 +92,15 @@ const getALlUsers = async (params, options) => {
     const result = await prisma.user.findMany({
         skip,
         take: limit,
-        where: {AND: andConditions},
+        where: whereConditions,
         orderBy: {
             [sortBy]: sortOrder,
         },
     });
 
-    return result;
+    const total = await prisma.user.count({where: whereConditions});
+
+    return {meta: {page, limit, total}, data: result};
 };
 
 export const UserService = {createPatient, createDoctor, getALlUsers};

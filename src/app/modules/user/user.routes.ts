@@ -31,6 +31,6 @@ router.post(
     },
 );
 
-router.get('/users', UserController.getALlUsers);
+router.get('/users', checkAyth(), UserController.getALlUsers);
 
 export const UserRoutes: Router = router;
