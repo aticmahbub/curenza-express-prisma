@@ -4,6 +4,9 @@ import {prisma} from '../../../lib/prisma';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader';
 import {UserRole} from '../../../generated/enums';
+import {calculatePagination} from '../../utils/pagination';
+import type {Prisma} from '../../../generated/client';
+import {userSearchableFields} from './user.constants';
 
 const createPatient = async (req: Request) => {
     if (req.file) {
@@ -57,30 +60,37 @@ const createDoctor = async (req: Request) => {
     return result;
 };
 
-const getALlUsers = async ({
-    page,
-    limit,
-    search,
-    sortBy,
-    sortOrder,
-}: {
-    page: number;
-    limit: number;
-    search: string;
-    sortBy: string;
-    sortOrder: string;
-}) => {
-    const pageNumber = page || 1;
-    const limitNumber = limit || 10;
+const getALlUsers = async (params, options) => {
+    const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
+    const {search, ...filterData} = params;
 
-    const skip = (pageNumber - 1) * limitNumber;
+    const andConditions: Prisma.UserWhereInput[] = [];
+
+    if (search) {
+        andConditions.push({
+            OR: userSearchableFields.map((field) => ({
+                [field]: {contains: search, mode: 'insensitive'},
+            })),
+        });
+    }
+
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: {equals: (filterData as any)[key]},
+            })),
+        });
+    }
+
     const result = await prisma.user.findMany({
         skip,
-        take: limitNumber,
-        where: {email: {contains: search, mode: 'insensitive'}},
-        orderBy:
-            sortBy && sortOrder ? {[sortBy]: sortOrder} : {createdAt: 'desc'},
+        take: limit,
+        where: {AND: andConditions},
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
     });
+
     return result;
 };
 
