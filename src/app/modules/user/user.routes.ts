@@ -7,6 +7,8 @@ import express, {
 import {UserController} from './user.controller';
 import {fileUploader} from '../../utils/fileUploader';
 import {UserValidation} from './user.validation';
+import {checkAuth} from '../../middlewares/checkAuth';
+import {UserRole} from '../../../generated/enums';
 const router = express.Router();
 
 router.post(
@@ -31,6 +33,6 @@ router.post(
     },
 );
 
-router.get('/users', checkAyth(), UserController.getALlUsers);
+router.get('/users', checkAuth(UserRole.ADMIN), UserController.getALlUsers);
 
 export const UserRoutes: Router = router;
