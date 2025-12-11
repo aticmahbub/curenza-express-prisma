@@ -2,6 +2,7 @@ import type {Request, Response} from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import {ScheduleServices} from './schedule.service';
+import {pick} from '../../utils/pick';
 
 const addSchedule = catchAsync(async (req: Request, res: Response) => {
     const result = await ScheduleServices.addSchedule(req.body);
@@ -14,13 +15,37 @@ const addSchedule = catchAsync(async (req: Request, res: Response) => {
 });
 
 const schedulesForDoctor = catchAsync(async (req: Request, res: Response) => {
-    const result = await ScheduleServices.addSchedule(req.body);
+    const options = pick(req.query, [
+        'page',
+        'limit',
+        'skip',
+        'sortBy',
+        'sortOrder',
+    ]);
+    const filters = pick(req.query, ['startDateTime', 'endDateTime']);
+
+    const result = await ScheduleServices.schedulesForDoctor(filters, options);
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Schedule is created successfully',
+        message: 'Schedules fetched  successfully',
+        meta: result.meta,
+        data: result.data,
+    });
+});
+
+const deleteSchedule = catchAsync(async (req: Request, res: Response) => {
+    const result = await ScheduleServices.deleteSchedule(req.params.id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Schedule is deleted successfully',
         data: result,
     });
 });
 
-export const ScheduleController = {addSchedule, schedulesForDoctor};
+export const ScheduleController = {
+    addSchedule,
+    schedulesForDoctor,
+    deleteSchedule,
+};

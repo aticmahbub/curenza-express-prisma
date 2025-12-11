@@ -1,11 +1,11 @@
-interface IOptions {
+export interface IOptions {
     page?: string | number;
     limit?: string | number;
     skip?: number;
     sortBy?: string;
     sortOrder?: string;
 }
-interface IOptionsResult {
+export interface IOptionsResult {
     page: number;
     limit: number;
     skip: number;
