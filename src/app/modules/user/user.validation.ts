@@ -1,4 +1,5 @@
-import z from 'zod';
+import z, {string} from 'zod';
+import {Gender} from '../../../generated/enums';
 
 const createPatientValidationSchema = z.object({
     password: z.string(),
@@ -16,6 +17,11 @@ const createDoctorValidationSchema = z.object({
         email: z.email(),
         address: z.string().optional(),
         contactNumber: z.string(),
+        gender: z.enum(Gender),
+        appointmentFee: z.number(),
+        qualification: z.string(),
+        currentWorkingPlace: z.string(),
+        designation: z.string(),
     }),
 });
 
