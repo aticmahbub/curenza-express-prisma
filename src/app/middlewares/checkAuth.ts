@@ -1,6 +1,7 @@
 import type {NextFunction, Request, Response} from 'express';
 import {verifyToken} from '../utils/verifyToken';
 import config from '../../config';
+import ApiError from '../errorHelpers/ApiError';
 
 export const checkAuth = (...roles: string[]) => {
     return async (
@@ -12,7 +13,7 @@ export const checkAuth = (...roles: string[]) => {
             const token = req.cookies.accessToken;
 
             if (!token) {
-                throw new Error('No token received');
+                throw new ApiError(401, 'No token received');
             }
 
             const verifiedUser = verifyToken(
@@ -23,7 +24,7 @@ export const checkAuth = (...roles: string[]) => {
             req.user = verifiedUser;
 
             if (roles.length && !roles.includes(verifiedUser.role)) {
-                throw new Error('You are not authorized');
+                throw new ApiError(401, 'You are not authorized');
             }
 
             next();
