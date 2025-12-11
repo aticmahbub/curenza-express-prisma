@@ -5,12 +5,16 @@ import {UserRole} from '../../../generated/enums';
 
 const router = Router();
 
-router.post('/', ScheduleController.addSchedule);
+router.post('/', checkAuth(UserRole.ADMIN), ScheduleController.addSchedule);
 router.get(
     '/',
     checkAuth(UserRole.ADMIN, UserRole.DOCTOR),
     ScheduleController.schedulesForDoctor,
 );
-router.delete('/:id', ScheduleController.deleteSchedule);
+router.delete(
+    '/:id',
+    checkAuth(UserRole.ADMIN),
+    ScheduleController.deleteSchedule,
+);
 
 export const ScheduleRoutes: Router = router;
