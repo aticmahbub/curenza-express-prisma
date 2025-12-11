@@ -3,7 +3,7 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import {DoctorService} from './doctor.service';
 import {pick} from '../../utils/pick';
-import {doctorFilterableFields} from './doctor.constatnts';
+import {doctorFilterableFields} from './doctor.constants';
 
 const getDoctors = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -27,5 +27,18 @@ const getDoctors = catchAsync(
         });
     },
 );
+const updateDoctor = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const {id} = req.params;
+        const result = await DoctorService.updateDoctor(id!, req.body);
 
-export const DoctorController = {getDoctors};
+        sendResponse(res, {
+            statusCode: 201,
+            success: true,
+            message: 'Doctor profile is updated  successfully',
+            data: result,
+        });
+    },
+);
+
+export const DoctorController = {getDoctors, updateDoctor};
