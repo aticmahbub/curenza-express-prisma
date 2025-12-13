@@ -18,6 +18,17 @@ const getDoctors = async (filters, options) => {
         });
     }
 
+    if (specialties && specialties.length > 0) {
+        andConditions.push({
+            doctorSpecialties: {
+                some: {
+                    specialties: {
+                        title: {contains: specialties, mode: 'insensitive'},
+                    },
+                },
+            },
+        });
+    }
     if (Object.keys(filterData).length > 0) {
         const filterConditions = Object.keys(filterData).map((key) => ({
             [key]: {equals: (filterData as any)[key]},
@@ -33,6 +44,7 @@ const getDoctors = async (filters, options) => {
         skip,
         take: limit,
         orderBy: {[sortBy]: sortOrder},
+        include: {doctorSpecialties: {include: {specialties: true}}},
     });
 
     const total = await prisma.doctor.count({where: whereConditions});
