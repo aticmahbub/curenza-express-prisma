@@ -16,7 +16,7 @@ const addDoctorSchedule = catchAsync(
         sendResponse(res, {
             statusCode: 201,
             success: true,
-            message: 'Patient is created successfully',
+            message: 'Schedule is created successfully',
             data: result,
         });
     },
