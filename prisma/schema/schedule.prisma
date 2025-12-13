@@ -7,6 +7,8 @@ model Schedule {
 
     doctorSchedules DoctorSchedule[]
 
+    appointments Appointment[]
+
     @@map("schedules")
 }
 
