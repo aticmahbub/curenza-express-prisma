@@ -208,28 +208,28 @@ export type SpecialtiesCreateInput = {
   id?: string
   title: string
   icon: string
-  doctorSpecialties?: Prisma.DoctorSpecialtiesCreateNestedManyWithoutSpecialitiesInput
+  doctorSpecialties?: Prisma.DoctorSpecialtiesCreateNestedManyWithoutSpecialtiesInput
 }
 
 export type SpecialtiesUncheckedCreateInput = {
   id?: string
   title: string
   icon: string
-  doctorSpecialties?: Prisma.DoctorSpecialtiesUncheckedCreateNestedManyWithoutSpecialitiesInput
+  doctorSpecialties?: Prisma.DoctorSpecialtiesUncheckedCreateNestedManyWithoutSpecialtiesInput
 }
 
 export type SpecialtiesUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
-  doctorSpecialties?: Prisma.DoctorSpecialtiesUpdateManyWithoutSpecialitiesNestedInput
+  doctorSpecialties?: Prisma.DoctorSpecialtiesUpdateManyWithoutSpecialtiesNestedInput
 }
 
 export type SpecialtiesUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
-  doctorSpecialties?: Prisma.DoctorSpecialtiesUncheckedUpdateManyWithoutSpecialitiesNestedInput
+  doctorSpecialties?: Prisma.DoctorSpecialtiesUncheckedUpdateManyWithoutSpecialtiesNestedInput
 }
 
 export type SpecialtiesCreateManyInput = {

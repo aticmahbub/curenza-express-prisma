@@ -2,6 +2,7 @@ import type {Doctor, Prisma} from '../../../generated/client';
 import {prisma} from '../../../lib/prisma';
 import {calculatePagination} from '../../utils/pagination';
 import {doctorSearchableFields} from './doctor.constants';
+import type {IDoctorUpdateInput} from './doctor.interface';
 
 const getDoctors = async (filters, options) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
@@ -39,15 +40,44 @@ const getDoctors = async (filters, options) => {
     return {meta: {total, page, limit}, data: result};
 };
 
-const updateDoctor = async (id: string, payload: Partial<Doctor>) => {
+const updateDoctor = async (
+    id: string,
+    payload: Partial<IDoctorUpdateInput>,
+) => {
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({where: {id}});
 
-    const updatedData = await prisma.doctor.update({
-        where: {id: doctorInfo.id},
-        data: payload,
-    });
+    const {specialties, ...doctorData} = payload;
 
-    return updatedData;
+    return await prisma.$transaction(async (tnx) => {
+        if (specialties && specialties.length! > 0) {
+            const deleteSpecialtyIds = specialties.filter(
+                (specialty) => specialty.isDeleted,
+            );
+
+            for (const specialty of deleteSpecialtyIds) {
+                await tnx.doctorSpecialties.deleteMany({
+                    where: {doctorId: id, specialtiesId: specialty.specialtyId},
+                });
+            }
+
+            const createdSpecialtyIds = specialties.filter(
+                (specialty) => !specialty.isDeleted,
+            );
+
+            for (const specialty of createdSpecialtyIds) {
+                await tnx.doctorSpecialties.create({
+                    data: {doctorId: id, specialtiesId: specialty.specialtyId},
+                });
+            }
+        }
+        const updatedData = await tnx.doctor.update({
+            where: {id: doctorInfo.id},
+            data: doctorData,
+            include: {doctorSpecialties: {include: {specialties: true}}},
+        });
+
+        return updatedData;
+    });
 };
 
 export const DoctorService = {getDoctors, updateDoctor};

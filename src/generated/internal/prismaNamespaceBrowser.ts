@@ -109,7 +109,7 @@ export type SpecialtiesScalarFieldEnum = (typeof SpecialtiesScalarFieldEnum)[key
 
 
 export const DoctorSpecialtiesScalarFieldEnum = {
-  specialitiesId: 'specialitiesId',
+  specialtiesId: 'specialtiesId',
   doctorId: 'doctorId'
 } as const
 
