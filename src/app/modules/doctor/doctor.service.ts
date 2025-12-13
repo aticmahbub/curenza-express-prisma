@@ -56,6 +56,22 @@ const getDoctors = async (filters, options) => {
     return {meta: {total, page, limit}, data: result};
 };
 
+const getDoctorById = async (id: string) => {
+    const doctor = prisma.doctor.findUniqueOrThrow({
+        where: {id, isDeleted: false},
+        include: {
+            doctorSpecialties: {include: {specialties: true}},
+            doctorSchedules: {include: {schedule: true}},
+        },
+    });
+
+    if (!doctor) {
+        throw new ApiError(404, 'Doctor is not found');
+    }
+
+    return doctor;
+};
+
 const updateDoctor = async (
     id: string,
     payload: Partial<IDoctorUpdateInput>,
@@ -95,6 +111,7 @@ const updateDoctor = async (
         return updatedData;
     });
 };
+
 const aiDoctorSuggestion = async (payload: {symptoms: string}) => {
     if (!(payload && payload.symptoms)) {
         throw new ApiError(400, 'Symptoms are required');
@@ -138,4 +155,9 @@ const aiDoctorSuggestion = async (payload: {symptoms: string}) => {
     return result;
 };
 
-export const DoctorService = {getDoctors, updateDoctor, aiDoctorSuggestion};
+export const DoctorService = {
+    getDoctors,
+    getDoctorById,
+    updateDoctor,
+    aiDoctorSuggestion,
+};

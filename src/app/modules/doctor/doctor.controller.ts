@@ -27,6 +27,21 @@ const getDoctors = catchAsync(
         });
     },
 );
+
+const getDoctorById = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const {id} = req.params;
+        const result = await DoctorService.getDoctorById(id);
+
+        sendResponse(res, {
+            statusCode: 201,
+            success: true,
+            message: 'Doctor profile is updated  successfully',
+            data: result,
+        });
+    },
+);
+
 const updateDoctor = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.params;
@@ -54,4 +69,9 @@ const aiDoctorSuggestion = catchAsync(
     },
 );
 
-export const DoctorController = {getDoctors, updateDoctor, aiDoctorSuggestion};
+export const DoctorController = {
+    getDoctors,
+    getDoctorById,
+    updateDoctor,
+    aiDoctorSuggestion,
+};
