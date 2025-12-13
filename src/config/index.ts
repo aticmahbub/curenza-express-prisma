@@ -19,4 +19,7 @@ export default {
         jwt_refresh_secret: process.env.JWT_REFRESH_SECRET as string,
         jwt_refresh_expires: process.env.JWT_REFRESH_EXPIRES as string,
     },
+    open_router: {
+        open_router_api_key: process.env.OPEN_ROUTER_API_KEY as string,
+    },
 };

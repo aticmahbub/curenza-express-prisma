@@ -1,8 +1,12 @@
+import type {ChatResponse} from '@openrouter/sdk/esm/models';
 import type {Doctor, Prisma} from '../../../generated/client';
+import {openRouter} from '../../../lib/openRouter';
 import {prisma} from '../../../lib/prisma';
+import ApiError from '../../errorHelpers/ApiError';
 import {calculatePagination} from '../../utils/pagination';
 import {doctorSearchableFields} from './doctor.constants';
 import type {IDoctorUpdateInput} from './doctor.interface';
+import {extractJsonFromMessage} from '../../utils/extratctJSONFromMessage';
 
 const getDoctors = async (filters, options) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
@@ -91,5 +95,47 @@ const updateDoctor = async (
         return updatedData;
     });
 };
+const aiDoctorSuggestion = async (payload: {symptoms: string}) => {
+    if (!(payload && payload.symptoms)) {
+        throw new ApiError(400, 'Symptoms are required');
+    }
 
-export const DoctorService = {getDoctors, updateDoctor};
+    const doctors = await prisma.doctor.findMany({
+        where: {isDeleted: false},
+        include: {doctorSpecialties: {include: {specialties: true}}},
+    });
+
+    const prompt = `You are a medical assistant AI. Based on the patient's symptoms, suggest top 3 suitable doctors.
+    Each doctor has specialties and years of experience.
+    Only suggest doctors who are relevant to the given symptoms.
+
+    Symptoms:${payload.symptoms}
+
+    Here is the doctor list in JSON format:
+    ${JSON.stringify(doctors, null, 2)}
+
+    Return your response in JSON format with full individual doctor data
+    `;
+
+    const completion: ChatResponse = await openRouter.chat.send({
+        model: 'tngtech/deepseek-r1t2-chimera:free',
+        messages: [
+            {
+                role: 'system',
+                content:
+                    'You are helpful medical AI Assistant that provides doctor suggestion',
+            },
+            {
+                role: 'user',
+                content: prompt,
+            },
+        ],
+        stream: false,
+    });
+
+    const result = await extractJsonFromMessage(completion.choices[0].message);
+
+    return result;
+};
+
+export const DoctorService = {getDoctors, updateDoctor, aiDoctorSuggestion};
