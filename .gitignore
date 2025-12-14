@@ -3,6 +3,6 @@ dist
 .env
 .env.test
 
-src/generated
+/src/generated
 
 uploads
