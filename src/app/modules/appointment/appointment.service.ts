@@ -1,4 +1,6 @@
+import config from '../../../config';
 import {prisma} from '../../../lib/prisma';
+import {stripe} from '../../../lib/stripe';
 import type {IJWTPayload} from '../../types/common';
 import {v4 as uuid} from 'uuid';
 
@@ -11,16 +13,16 @@ const createAppointment = async (
     });
 
     const doctorData = await prisma.doctor.findUniqueOrThrow({
-        where: {id: payload.doctorId},
+        where: {id: payload.doctorId, isDeleted: false},
     });
 
-    const vacantSlot = await prisma.doctorSchedule.findFirstOrThrow({
-        where: {
-            doctorId: payload.doctorId,
-            scheduleId: payload.scheduleId,
-            isBooked: false,
-        },
-    });
+    // const vacantSlot = await prisma.doctorSchedule.findFirstOrThrow({
+    //     where: {
+    //         doctorId: payload.doctorId,
+    //         scheduleId: payload.scheduleId,
+    //         isBooked: false,
+    //     },
+    // });
 
     const videoCallingId = uuid();
 
@@ -43,6 +45,38 @@ const createAppointment = async (
             },
             data: {isBooked: true},
         });
+
+        const transactionId = uuid();
+
+        const paymentData = await tnx.payment.create({
+            data: {
+                appointmentId: appointmentData.id,
+                amount: doctorData.appointmentFee,
+                transactionId,
+            },
+        });
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            customer_email: user.email,
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: `Appointment with Dr. ${doctorData.name}`,
+                        },
+                        unit_amount: doctorData.appointmentFee * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            success_url: `${config.client_url}/payment-success`,
+            cancel_url: `${config.client_url}/payment-failed`,
+        });
+
+        console.log(session);
 
         return appointmentData;
     });

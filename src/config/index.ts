@@ -7,6 +7,7 @@ export default {
     node_env: process.env.NODE_ENV,
     port: process.env.PORT,
     database_url: process.env.DATABASE_URL,
+    client_url: process.env.CLIENT_URL,
     bcrypt_js_salt_round: process.env.BCRYPT_JS_SALT_ROUND,
     cloudinary: {
         cloudinary_api_name: process.env.CLOUDINARY_API_NAME as string,
@@ -22,4 +23,5 @@ export default {
     open_router: {
         open_router_api_key: process.env.OPEN_ROUTER_API_KEY as string,
     },
+    stripe: {stripe_secret_key: process.env.STRIPE_SECRET_KEY as string},
 };

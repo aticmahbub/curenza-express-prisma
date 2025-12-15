@@ -20,9 +20,9 @@ model Appointment {
 model Payment {
   id                 String        @id @default(uuid())
   appointmentId      String        @unique
-  amount             String
+  amount             Float
   transactionId      String
-  status             PaymentStatus
+  status             PaymentStatus @default(UNPAID)
   paymentGatewayData Json?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
