@@ -16,13 +16,13 @@ const createAppointment = async (
         where: {id: payload.doctorId, isDeleted: false},
     });
 
-    // const vacantSlot = await prisma.doctorSchedule.findFirstOrThrow({
-    //     where: {
-    //         doctorId: payload.doctorId,
-    //         scheduleId: payload.scheduleId,
-    //         isBooked: false,
-    //     },
-    // });
+    const vacantSlot = await prisma.doctorSchedule.findFirstOrThrow({
+        where: {
+            doctorId: payload.doctorId,
+            scheduleId: payload.scheduleId,
+            isBooked: false,
+        },
+    });
 
     const videoCallingId = uuid();
 
@@ -63,7 +63,7 @@ const createAppointment = async (
             line_items: [
                 {
                     price_data: {
-                        currency: 'usd',
+                        currency: 'bdt',
                         product_data: {
                             name: `Appointment with Dr. ${doctorData.name}`,
                         },
@@ -72,13 +72,17 @@ const createAppointment = async (
                     quantity: 1,
                 },
             ],
+            metadata: {
+                appointmentId: appointmentData.id,
+                paymentId: paymentData.id,
+            },
             success_url: `${config.client_url}/payment-success`,
             cancel_url: `${config.client_url}/payment-failed`,
         });
 
-        console.log(session);
+        console.log(session.metadata);
 
-        return appointmentData;
+        return {paymentUrl: session.url};
     });
     return result;
 };
