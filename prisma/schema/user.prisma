@@ -50,22 +50,26 @@ model Doctor {
   doctorSpecialties   DoctorSpecialties[]
   user                User                @relation(fields: [email], references: [email])
   prescriptions       Prescription[]
+  reviews             Review[]
 
   @@map("doctors")
 }
 
 model Patient {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  name          String
-  profilePhoto  String?
-  address       String?
-  isDeleted     Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  appointments  Appointment[]
-  user          User           @relation(fields: [email], references: [email])
-  prescriptions Prescription[]
+  id                String             @id @default(uuid())
+  email             String             @unique
+  name              String
+  profilePhoto      String?
+  address           String?
+  isDeleted         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  appointments      Appointment[]
+  user              User               @relation(fields: [email], references: [email])
+  prescriptions     Prescription[]
+  patientHealthData PatientHealthData?
+  medicalReports    MedicalReport[]
+  reviews           Review[]
 
   @@map("patients")
 }
