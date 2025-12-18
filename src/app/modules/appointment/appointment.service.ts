@@ -4,7 +4,12 @@ import {stripe} from '../../../lib/stripe';
 import type {IJWTPayload} from '../../types/common';
 import {v4 as uuid} from 'uuid';
 import {calculatePagination} from '../../utils/pagination';
-import {UserRole, type Prisma} from '../../../generated/client';
+import {
+    AppointmentStatus,
+    UserRole,
+    type Prisma,
+} from '../../../generated/client';
+import ApiError from '../../errorHelpers/ApiError';
 
 const createAppointment = async (
     user: IJWTPayload,
@@ -131,4 +136,31 @@ const getMyAppointments = async (user, filters, options) => {
     return {meta: {total, page, limit}, data: result};
 };
 
-export const AppointmentService = {createAppointment, getMyAppointments};
+const updateAppointmentStatus = async (
+    appointmentId: string,
+    status: AppointmentStatus,
+    user: IJWTPayload,
+) => {
+    const appointmentData = await prisma.appointment.findUniqueOrThrow({
+        where: {id: appointmentId},
+        include: {doctor: true},
+    });
+    console.log(user.role, appointmentData.doctor.email);
+
+    if (user.role === UserRole.DOCTOR) {
+        if (!(user.email === appointmentData.doctor.email)) {
+            throw new ApiError(502, 'This is not your appointment');
+        }
+    }
+
+    return await prisma.appointment.update({
+        where: {id: appointmentId},
+        data: {status},
+    });
+};
+
+export const AppointmentService = {
+    createAppointment,
+    getMyAppointments,
+    updateAppointmentStatus,
+};
