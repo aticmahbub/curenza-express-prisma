@@ -2,6 +2,8 @@ node_modules
 dist
 .env
 
-/src/generated
+src/generated/
+
+
 
 uploads

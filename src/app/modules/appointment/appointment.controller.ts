@@ -43,7 +43,7 @@ const getMyAppointments = catchAsync(
         sendResponse(res, {
             statusCode: 201,
             success: true,
-            message: 'Appointment is created successfully',
+            message: 'Appointment is fetched successfully',
             data: result,
         });
     },
