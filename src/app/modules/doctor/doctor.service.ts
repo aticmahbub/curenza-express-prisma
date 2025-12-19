@@ -48,7 +48,10 @@ const getDoctors = async (filters, options) => {
         skip,
         take: limit,
         orderBy: {[sortBy]: sortOrder},
-        include: {doctorSpecialties: {include: {specialties: true}}},
+        include: {
+            doctorSpecialties: {include: {specialties: true}},
+            reviews: true,
+        },
     });
 
     const total = await prisma.doctor.count({where: whereConditions});
@@ -62,6 +65,7 @@ const getDoctorById = async (id: string) => {
         include: {
             doctorSpecialties: {include: {specialties: true}},
             doctorSchedules: {include: {schedule: true}},
+            reviews: true,
         },
     });
 
