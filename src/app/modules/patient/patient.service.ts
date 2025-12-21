@@ -53,6 +53,7 @@ const getAllFromDB = async (
                 : {
                       createdAt: 'desc',
                   },
+        include: {medicalReports: true, patientHealthData: true},
     });
     const total = await prisma.patient.count({
         where: whereConditions,
@@ -100,56 +101,34 @@ const softDelete = async (id: string): Promise<Patient | null> => {
     });
 };
 
-// PatientHealthData, MedicalReport, patient
-
 const updateIntoDB = async (user: IJWTPayload, payload: any) => {
     const {medicalReport, patientHealthData, ...patientData} = payload;
 
     const patientInfo = await prisma.patient.findUniqueOrThrow({
-        where: {
-            email: user.email,
-            isDeleted: false,
-        },
+        where: {email: user.email, isDeleted: false},
     });
 
-    return await prisma.$transaction(async (tnx) => {
+    return prisma.$transaction(async (tnx) => {
         await tnx.patient.update({
-            where: {
-                id: patientInfo.id,
-            },
+            where: {id: patientInfo.id},
             data: patientData,
         });
-
         if (patientHealthData) {
             await tnx.patientHealthData.upsert({
-                where: {
-                    patientId: patientInfo.id,
-                },
+                where: {patientId: patientInfo.id},
                 update: patientHealthData,
-                create: {
-                    ...patientHealthData,
-                    patientId: patientInfo.id,
-                },
+                create: {...patientHealthData, patientId: patientInfo.id},
             });
         }
 
         if (medicalReport) {
             await tnx.medicalReport.create({
-                data: {
-                    ...medicalReport,
-                    patientId: patientInfo.id,
-                },
+                data: {...medicalReport, patientId: patientInfo.id},
             });
         }
-
         const result = await tnx.patient.findUnique({
-            where: {
-                id: patientInfo.id,
-            },
-            include: {
-                patientHealthData: true,
-                medicalReports: true,
-            },
+            where: {id: patientInfo.id},
+            include: {patientHealthData: true, medicalReports: true},
         });
         return result;
     });

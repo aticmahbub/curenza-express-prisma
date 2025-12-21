@@ -2,9 +2,10 @@ import config from '../../../config';
 import {UserStatus} from '../../../generated/enums';
 import {prisma} from '../../../lib/prisma';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import {generateToken} from '../../utils/generateToken';
 import ApiError from '../../errorHelpers/ApiError';
+import {verifyToken} from '../../utils/verifyToken';
+import type {Secret} from 'jsonwebtoken';
 
 const login = async (payload: {email: string; password: string}) => {
     const user = await prisma.user.findUniqueOrThrow({
@@ -38,4 +39,18 @@ const login = async (payload: {email: string; password: string}) => {
     };
 };
 
-export const AuthService = {login};
+const getMe = async (session: any) => {
+    const decodedData = verifyToken(
+        session.accessToken,
+        config.jwt.jwt_access_secret as Secret,
+    );
+
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {email: decodedData.email, status: UserStatus.ACTIVE},
+    });
+
+    const {id, email, role, needPasswordChange, status} = userData;
+
+    return {id, email, role, needPasswordChange, status};
+};
+export const AuthService = {login, getMe};
