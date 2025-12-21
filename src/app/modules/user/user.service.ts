@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import {prisma} from '../../../lib/prisma';
 import type {Request} from 'express';
 import {fileUploader} from '../../utils/fileUploader';
-import {UserRole} from '../../../generated/enums';
+import {UserRole, UserStatus} from '../../../generated/enums';
 import {calculatePagination} from '../../utils/pagination';
 import type {Prisma} from '../../../generated/client';
 import {userSearchableFields} from './user.constants';
@@ -134,9 +134,22 @@ const getALlUsers = async (params, options) => {
     return {meta: {page, limit, total}, data: result};
 };
 
+const getProfile = async (user) => {
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {email: user.email, status: UserStatus.ACTIVE},
+        omit: {password: true},
+        // include: {},
+    });
+
+    return userInfo;
+
+    console.log(userInfo);
+};
+
 export const UserService = {
     createPatient,
     createDoctor,
     createAdmin,
     getALlUsers,
+    getProfile,
 };

@@ -45,5 +45,10 @@ router.post(
 );
 
 router.get('/users', checkAuth(UserRole.ADMIN), UserController.getALlUsers);
+router.get(
+    '/profile',
+    checkAuth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    UserController.getProfile,
+);
 
 export const UserRoutes: Router = router;
