@@ -15,7 +15,7 @@ const login = catchAsync(async (req: Request, res: Response) => {
         statusCode: 201,
         success: true,
         message: 'User is logged in successfully',
-        data: {needPasswordChange},
+        data: {needPasswordChange, accessToken: result.accessToken},
     });
 });
 

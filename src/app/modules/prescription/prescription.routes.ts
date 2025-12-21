@@ -5,6 +5,12 @@ import {UserRole} from '../../../generated/enums';
 
 const router = Router();
 
+router.get(
+    '/my-prescription',
+    checkAuth(UserRole.PATIENT),
+    PrescriptionController.patientPrescription,
+);
+
 router.post(
     '/',
     checkAuth(UserRole.DOCTOR),
