@@ -7,8 +7,19 @@ import config from './config';
 import router from './app/routes';
 import cookieParser from 'cookie-parser';
 import {PaymentController} from './app/modules/payment/payment.controller';
+import cron from 'node-cron';
+import {AppointmentService} from './app/modules/appointment/appointment.service';
 
 const app: Application = express();
+
+cron.schedule('* * * * *', () => {
+    try {
+        console.log('Node cron called at', new Date());
+        AppointmentService.cancelUnpaidAppointMents();
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 app.post(
     '/webhook',
