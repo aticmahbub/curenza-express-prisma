@@ -7,7 +7,7 @@ import {prisma} from '../../../lib/prisma';
 import ApiError from '../../errorHelpers/ApiError';
 import {calculatePagination} from '../../utils/pagination';
 
-const createPrescription = async (user, payload) => {
+const createPrescription = async (user: any, payload: any) => {
     const appointmentData = await prisma.appointment.findUniqueOrThrow({
         where: {
             id: payload.appointmentId,
@@ -35,7 +35,7 @@ const createPrescription = async (user, payload) => {
     });
 };
 
-const patientPrescription = async (user, options) => {
+const patientPrescription = async (user: any, options: any) => {
     const {limit, page, skip, sortOrder, sortBy} = calculatePagination(options);
 
     const result = await prisma.prescription.findMany({

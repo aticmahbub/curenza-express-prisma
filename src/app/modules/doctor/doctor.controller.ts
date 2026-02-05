@@ -21,7 +21,7 @@ const getDoctors = catchAsync(
         sendResponse(res, {
             statusCode: 201,
             success: true,
-            message: 'Schedules fetched  successfully',
+            message: 'Doctors fetched  successfully',
             meta: result.meta,
             data: result.data,
         });

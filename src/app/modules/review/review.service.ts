@@ -1,7 +1,7 @@
 import {prisma} from '../../../lib/prisma';
 import ApiError from '../../errorHelpers/ApiError';
 
-const createReview = async (user, payload) => {
+const createReview = async (user: any, payload: any) => {
     const patientData = await prisma.patient.findUniqueOrThrow({
         where: {email: user.email},
     });
@@ -24,6 +24,7 @@ const createReview = async (user, payload) => {
                 comment: payload.comment,
             },
         });
+
         const avgRating = await tnx.review.aggregate({
             _avg: {rating: true},
             where: {doctorId: appointmentData.doctorId},

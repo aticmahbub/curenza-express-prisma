@@ -91,7 +91,7 @@ const createAdmin = async (req: Request) => {
     return result;
 };
 
-const getALlUsers = async (params, options) => {
+const getALlUsers = async (params: any, options: any) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {search, ...filterData} = params;
 
@@ -134,16 +134,13 @@ const getALlUsers = async (params, options) => {
     return {meta: {page, limit, total}, data: result};
 };
 
-const getProfile = async (user) => {
+const getProfile = async (user: any) => {
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {email: user.email, status: UserStatus.ACTIVE},
         omit: {password: true},
-        // include: {},
     });
 
     return userInfo;
-
-    console.log(userInfo);
 };
 
 export const UserService = {

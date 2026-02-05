@@ -8,7 +8,7 @@ import {doctorSearchableFields} from './doctor.constants';
 import type {IDoctorUpdateInput} from './doctor.interface';
 import {extractJsonFromMessage} from '../../utils/extratctJSONFromMessage';
 
-const getDoctors = async (filters, options) => {
+const getDoctors = async (filters: any, options: any) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {search, specialties, ...filterData} = filters;
 

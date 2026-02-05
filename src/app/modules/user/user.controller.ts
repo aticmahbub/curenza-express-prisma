@@ -31,7 +31,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Admin Created successfuly!',
+        message: 'Admin Created successfully!',
         data: result,
     });
 });
@@ -39,7 +39,6 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
 const getALlUsers = catchAsync(async (req: Request, res: Response) => {
     const filters = pick(req.query, userFilterableFields);
     const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
-    console.log(filters);
 
     const result = await UserService.getALlUsers(filters, options);
     sendResponse(res, {

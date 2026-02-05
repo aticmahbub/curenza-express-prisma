@@ -7,9 +7,7 @@ async function bootstrap() {
 
     try {
         server = app.listen(config.port, () => {
-            console.log(
-                ` Server is running on http://localhost:${config.port}`,
-            );
+            console.log(`Server is running on http://localhost:${config.port}`);
         });
 
         const exitHandler = () => {
