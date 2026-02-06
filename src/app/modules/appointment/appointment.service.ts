@@ -95,7 +95,7 @@ const createAppointment = async (
     return result;
 };
 
-const getMyAppointments = async (user, filters, options) => {
+const getMyAppointments = async (user: any, filters: any, options: any) => {
     const {page, limit, skip, sortBy, sortOrder} = calculatePagination(options);
     const {...filterData} = filters;
 
